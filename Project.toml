@@ -1,0 +1,8 @@
+name = "MimiNICE"
+uuid = "c24c6efa-5c27-4fc2-84f3-35761679f1fd"
+authors = ["Frank <frankerrickson@berkeley.edu>"]
+version = "0.1.0"
+
+[deps]
+Mimi = "e4e893b0-ee5e-52ea-8111-44b3bdec128c"
+MimiRICE2010 = "54b9761e-41d9-11e9-3151-3dc5fec6a45b"
