@@ -3,33 +3,40 @@ module MimiNICE
 # Load required packages.
 using CSVFiles, DataFrames, Mimi, MimiRICE2010
 
-# Export the following functions.
-export create_nice, quintile_distribution
 
-# ---------------------------------------------
-# Load data and model files.
-# ---------------------------------------------
-
-# Load required files and NICE components being added to the RICE model.
+# Load helper functions and NICE components being added to the RICE model.
 include("helper_functions.jl")
 include(joinpath("nice_components", "nice_neteconomy_component.jl"))
 include(joinpath("nice_components", "nice_welfare_component.jl"))
 
-# Load updated UN population projections and convert units to millions of people.
-un_population_data = DataFrame(load(joinpath(@__DIR__, "..", "data", "UN_medium_population_scenario.csv"), skiplines_begin=3))[:, 3:end] ./ 1000
-
-# Calculate quintile population levels for each region.
-quintile_population = un_population_data ./ 5
-
-# Load quintile income distribution data.
-income_distribution = DataFrame(load(joinpath(@__DIR__, "..", "data", "quintile_income_shares.csv"), skiplines_begin=2))
+# Export the following functions.
+export create_nice, quintile_distribution
 
 
+# ---------------------------------------------
 # ---------------------------------------------
 # Create function to build NICE.
 # ---------------------------------------------
+# ---------------------------------------------
 
 function create_nice()
+
+	#----------------------#
+	#----- Load Data ----- #
+	#----------------------#
+
+	# Load updated UN population projections and convert units to millions of people.
+	un_population_data = DataFrame(load(joinpath(@__DIR__, "..", "data", "UN_medium_population_scenario.csv"), skiplines_begin=3))[:, 3:end] ./ 1000
+
+	# Calculate quintile population levels for each region.
+	quintile_population = un_population_data ./ 5
+
+	# Load quintile income distribution data.
+	income_distribution = DataFrame(load(joinpath(@__DIR__, "..", "data", "quintile_income_shares.csv"), skiplines_begin=2))
+
+	#--------------------------------#
+	#----- Build NICE from RICE----- #
+	#--------------------------------#
 
 	# Initialize NICE as an instance of RICE2010.
 	nice = MimiRICE2010.get_model()
@@ -47,6 +54,10 @@ function create_nice()
 	# Add in NICE's net economy and welfare components.
 	add_comp!(nice, nice_neteconomy, after = :damages)
 	add_comp!(nice, nice_welfare,    after = :nice_neteconomy)
+
+	#------------------------------------#
+	#----- Assign Model Parameters ----- #
+	#------------------------------------#
 
     # Set and update NICE component parameters.
     set_param!(nice, :grosseconomy, :dk, ones(12))
@@ -71,6 +82,7 @@ function create_nice()
     connect_param!(nice, :nice_neteconomy, :ABATECOST,  :emissions,       :ABATECOST)
     connect_param!(nice, :nice_welfare,    :quintile_c, :nice_neteconomy, :quintile_c_post)
 
+    # Return NICE model.
     return nice
 end
 
