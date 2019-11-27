@@ -74,4 +74,4 @@ function create_nice()
     return nice
 end
 
-#end #module
+end # module
