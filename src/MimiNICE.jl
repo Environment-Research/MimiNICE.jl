@@ -4,7 +4,7 @@ module MimiNICE
 using CSVFiles, DataFrames, Mimi, MimiRICE2010
 
 # Export the following functions.
-export construct_nice, quintile_distribution
+export create_nice, quintile_distribution
 
 # ---------------------------------------------
 # Load data and model files.
