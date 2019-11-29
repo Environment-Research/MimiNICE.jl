@@ -15,7 +15,7 @@
 # Function Arguments:
 #
 #       elasticity    = Income elasticity of climate damages, mitigation costs, etc.
-#       income_shares = An array of quintile income shares (row = quintile, column = RICE region).
+#       income_shares = An array of quintile income shares (row = RICE region, column = quintile).
 #--------------------------------------------------------------------------------------------------------------------
 
 function quintile_distribution(elasticity, income_shares)
@@ -24,11 +24,11 @@ function quintile_distribution(elasticity, income_shares)
     scaled_shares = income_shares .^ elasticity
 
     # Allocate empty array for distribution across quintiles resulting from the elasticity.
-    updated_distribution = zeros(5,12)
+    updated_distribution = zeros(12,5)
 
     # Loop through each RICE region to calculate updated distributions.
     for r in 1:12
-        updated_distribution[:,r] = scaled_shares[:,r] ./ sum(scaled_shares[:,r])
+        updated_distribution[r,:] = scaled_shares[r,:] ./ sum(scaled_shares[r,:])
     end
 
     return updated_distribution

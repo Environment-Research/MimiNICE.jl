@@ -8,9 +8,9 @@
     ABATECOST       = Parameter(index=[time, regions])           # Cost of CO₂ emission reductions (trillions 2005 USD yr⁻¹).
     S               = Parameter(index=[time, regions])           # Savings rate as share of gross economic output.
     l               = Parameter(index=[time, regions])           # Regional population (millions).
-    income_dist     = Parameter(index=[quintiles, regions])      # Quintile share of regional income.
-    damage_dist     = Parameter(index=[quintiles, regions])      # Quintile share of regional climate damages.
-    abatement_dist  = Parameter(index=[quintiles, regions])      # Quintile share of regional CO₂ abatement costs.
+    income_dist     = Parameter(index=[regions, quintiles])      # Quintile share of regional income.
+    damage_dist     = Parameter(index=[regions, quintiles])      # Quintile share of regional climate damages.
+    abatement_dist  = Parameter(index=[regions, quintiles])      # Quintile share of regional CO₂ abatement costs.
 
     Y               = Variable(index=[time, regions])            # Gross world product net of abatement and damages (trillions 2005 USD yr⁻¹).
     I               = Variable(index=[time, regions])            # Investment (trillions 2005 USD yr⁻¹).
@@ -49,10 +49,10 @@
 
             for q in d.quintiles
                 # Calculate pre-damage, pre-abatement cost quintile consumption.
-                v.quintile_c_pre[t,r,q] = temp_C * p.income_dist[q,r]
+                v.quintile_c_pre[t,r,q] = temp_C * p.income_dist[r,q]
 
                 # Calculate post-damage, post-abatement cost quintile consumption (bounded below to ensure consumptions don't collapse to zero or go negative).
-                v.quintile_c_post[t,r,q] = max(v.quintile_c_pre[t,r,q] - (5.0 * v.CPC[t,r] * p.DAMFRAC[t,r] * p.damage_dist[q,r]) - (temp_C * v.ABATEFRAC[t,r] * p.abatement_dist[q,r]), 1e-8)
+                v.quintile_c_post[t,r,q] = max(v.quintile_c_pre[t,r,q] - (5.0 * v.CPC[t,r] * p.DAMFRAC[t,r] * p.damage_dist[r,q]) - (temp_C * v.ABATEFRAC[t,r] * p.abatement_dist[r,q]), 1e-8)
             end
         end
     end
