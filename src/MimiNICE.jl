@@ -59,18 +59,18 @@ function create_nice()
     #----- Assign Model Parameters ----- #
     #------------------------------------#
 
-    # Set and update NICE component parameters.
-    set_param!(nice, :grosseconomy, :dk, ones(12))
-    set_param!(nice, :grosseconomy, :l, un_population_data)
+    # Update/set already existing RICE parameters.
+    set_param!(nice, :dk,  ones(12))
+    set_param!(nice, :MIU, zeros(n_steps, 12))
+    set_param!(nice, :S,   ones(n_steps, 12) .* 0.2585)
+    set_param!(nice, :l,   un_population_data)
 
-    set_param!(nice, :emissions, :MIU, zeros(n_steps, 12))
-
-    set_param!(nice, :nice_neteconomy, :l, un_population_data)
-    set_param!(nice, :nice_neteconomy, :S, ones(n_steps, 12) .* 0.2585)
+    # Set new NICE component parameters for net economy.
     set_param!(nice, :nice_neteconomy, :income_dist, income_distribution ./ 100)
     set_param!(nice, :nice_neteconomy, :damage_dist, quintile_distribution(1.0, income_distribution))
     set_param!(nice, :nice_neteconomy, :abatement_dist, quintile_distribution(1.0, income_distribution))
 
+    # Set new NICE component parameters for welfare component.
     set_param!(nice, :nice_welfare, :quintile_pop, quintile_population)
     set_param!(nice, :nice_welfare, :rho, 0.015)
     set_param!(nice, :nice_welfare, :eta, 1.5)
