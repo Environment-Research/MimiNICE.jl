@@ -26,13 +26,13 @@ function create_nice()
     #----------------------#
 
     # Load updated UN population projections and convert units to millions of people.
-    un_population_data = convert(Matrix, DataFrame(load(joinpath(@__DIR__, "..", "data", "UN_medium_population_scenario.csv"), skiplines_begin=3))[:, 3:end]) ./ 1000
+    un_population_data = Matrix(DataFrame(load(joinpath(@__DIR__, "..", "data", "UN_medium_population_scenario.csv"), skiplines_begin=3))[:, 3:end]) ./ 1000
 
     # Calculate quintile population levels for each region.
     quintile_population = un_population_data ./ 5
 
     # Load quintile income distribution data.
-    income_distribution = convert(Matrix, DataFrame(load(joinpath(@__DIR__, "..", "data", "quintile_income_shares.csv"), skiplines_begin=2))[:,2:end])
+    income_distribution = Matrix(DataFrame(load(joinpath(@__DIR__, "..", "data", "quintile_income_shares.csv"), skiplines_begin=2))[:,2:end])
 
     #--------------------------------#
     #----- Build NICE from RICE----- #
